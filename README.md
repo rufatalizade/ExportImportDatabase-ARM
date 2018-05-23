@@ -1,4 +1,6 @@
-### List storage account in the subcscription:
+## This article explain about creating two Azure SQL Server/DB then export/import from first one to second.
+
+
 ```powershell 
 PS C:\PowerShell> Get-AzureRMStorageAccount | Select StorageAccountName
 , Location
@@ -29,8 +31,7 @@ ResourceGroupName : jsRG
 Location          : westeurope
 ProvisioningState : Succeeded
 Tags              :
-ResourceId        : /subscriptions/7739e5e8-222a-46c5-b26f-5d7191b4e5b
-                    6/resourceGroups/jsRG
+ResourceId        : /subscriptions/7739e5e8-222a-46c5-b26f-5d7191b4e5b6/resourceGroups/jsRG
 ```
 
 ### Set storage account name and SKU name (Note Storage account name can be only with lower letters):
