@@ -1,0 +1,195 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rasql01AdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rasql01AdminLoginPassword": {
+      "type": "securestring"
+    },
+    "rasql02AdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rasql02AdminLoginPassword": {
+      "type": "securestring"
+    },
+    "rasqldb01Name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rasqldb01Collation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "rasqldb01Edition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "rasqldb01RequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+    "rasqldb02Name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rasqldb02Collation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "rasqldb02Edition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "rasqldb02RequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    }},
+  "variables": {
+    "rasql01Name": "[concat('rasql01', uniqueString(resourceGroup().id))]",
+    "rasql02Name": "[concat('rasql02', uniqueString(resourceGroup().id))]"},
+  "resources": [
+    {
+      "name": "[variables('rasql01Name')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "rasql01"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('rasql01AdminLogin')]",
+        "administratorLoginPassword": "[parameters('rasql01AdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [  
+            "[resourceId('Microsoft.Sql/servers', variables('rasql01Name'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('rasqldb01Name')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('rasql01Name'))]"
+          ],
+          "tags": {
+            "displayName": "rasqldb01"
+          },
+          "properties": {
+            "collation": "[parameters('rasqldb01Collation')]",
+            "edition": "[parameters('rasqldb01Edition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('rasqldb01RequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('rasql02Name')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "rasql02"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('rasql02AdminLogin')]",
+        "administratorLoginPassword": "[parameters('rasql02AdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('rasql02Name'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('rasqldb02Name')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('rasql02Name'))]"
+          ],
+          "tags": {
+            "displayName": "rasqldb02"
+          },
+          "properties": {
+            "collation": "[parameters('rasqldb02Collation')]",
+            "edition": "[parameters('rasqldb02Edition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('rasqldb02RequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    }],
+  "outputs": {
+    "sql1ServerName": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Sql/servers/', variables('rasql01Name'))).fullyQualifiedDomainName]"
+    },
+    "sql2ServerName": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Sql/servers/', variables('rasql02Name'))).fullyQualifiedDomainName]"
+    } 
+  }
+}

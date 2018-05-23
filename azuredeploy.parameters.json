@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+    "rasql01AdminLogin": { "value": "sqladmin" },
+    "rasql01AdminLoginPassword": { "value": "Pswrdlogn@" },
+    "rasql02AdminLogin": { "value": "sqladmin" },
+    "rasql02AdminLoginPassword": { "value": "Pswrdlogn@" },
+    "rasqldb01Name": { "value": "dbname01" },
+    "rasqldb02Name": { "value": "dbname02" }
+  }
+
+}
